@@ -46,9 +46,11 @@ fun AlcoolGasolinaPreco(
     var gasolina by remember { mutableStateOf(postoEditando?.gasolina?.toString() ?: "") }
     var nomeDoPosto by remember { mutableStateOf(postoEditando?.nome ?: "") }
 
-    // 🔥 SLIDER (true = 75%, false = 70%)
+    // ✅ CORREÇÃO AQUI (única mudança relevante)
     var sliderState by remember {
-        mutableStateOf(true)
+        mutableStateOf(
+            sharedPreferences.getBoolean("switch_state", true)
+        )
     }
 
     var resultadoResId by remember { mutableStateOf(R.string.vamos_calcular) }
@@ -115,10 +117,17 @@ fun AlcoolGasolinaPreco(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text("70%")
+
                 Switch(
                     checked = sliderState,
-                    onCheckedChange = { sliderState = it }
+                    onCheckedChange = {
+                        sliderState = it
+                        sharedPreferences.edit()
+                            .putBoolean("switch_state", it)
+                            .apply()
+                    }
                 )
+
                 Text("75%")
             }
 
