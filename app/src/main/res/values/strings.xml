@@ -1,3 +1,38 @@
 <resources>
-    <string name="app_name">ExemploSimplesDeCompose</string>
+
+    <string name="app_name">Álcool ou Gasolina</string>
+    <string name="welcome">Bem-vindos ao Álcool ou Gasolina</string>
+
+    <string name="calcular">Calcular</string>
+    <string name="salvar_posto">Salvar Posto</string>
+    <string name="ver_lista">Ver Lista de Postos</string>
+
+    <string name="preco_alcool">Preço do Álcool (R$)</string>
+    <string name="preco_gasolina">Preço da Gasolina (R$)</string>
+
+    <string name="nome_posto">Nome do Posto</string>
+    <string name="localizacao">Localização do Posto</string>
+
+    <string name="lista_postos">Lista de Postos</string>
+
+    <string name="atualizar_posto">Atualizar Posto</string>
+    <string name="compensa_alcool">Compensa usar Álcool</string>
+    <string name="compensa_gasolina">Compensa usar Gasolina</string>
+    <string name="valores_invalidos">Valores inválidos</string>
+
+    <string name="vamos_calcular">Vamos calcular</string>
+
+    <string name="posto_salvo">Posto salvo com sucesso!</string>
+    <string name="posto_atualizado">Posto atualizado com sucesso!</string>
+
+    <string name="avancar">Avançar</string>
+    <string name="voltar_calculo">Voltar ao Cálculo</string>
+
+    <string name="editar">Editar</string>
+    <string name="excluir">Excluir</string>
+
+    <string name="data_cadastro">Data de cadastro</string>
+
+    <string name="preencha_os_campos">Preencha os campos para calcular</string>
+
 </resources>

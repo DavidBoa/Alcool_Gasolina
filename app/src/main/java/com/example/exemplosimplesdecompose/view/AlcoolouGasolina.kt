@@ -1,136 +1,274 @@
 package com.example.exemplosimplesdecompose.view
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.Button
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.res.stringResource
+import com.example.exemplosimplesdecompose.R
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.exemplosimplesdecompose.data.Posto
+import com.example.exemplosimplesdecompose.data.Coordenadas
+import com.google.android.gms.location.LocationServices
+import com.google.gson.Gson
+import java.text.SimpleDateFormat
+import java.util.*
+import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.ui.text.style.TextAlign
 
 @Composable
-fun AlcoolGasolinaPreco(navController: NavHostController) {
-    var alcool by remember { mutableStateOf("") }
-    var gasolina by remember { mutableStateOf("") }
-    var nomeDoPosto by remember { mutableStateOf("") }
-    var checkedState by remember { mutableStateOf(true) }
+fun AlcoolGasolinaPreco(
+    navController: NavHostController,
+    postoEditando: Posto? = null
+) {
 
-    // A surface container using the 'background' color from the theme
+    val context = LocalContext.current
+    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+
+    val sharedPreferences = context.getSharedPreferences(
+        "postos",
+        Context.MODE_PRIVATE
+    )
+
+    val gson = Gson()
+
+    var alcool by remember { mutableStateOf(postoEditando?.alcool?.toString() ?: "") }
+    var gasolina by remember { mutableStateOf(postoEditando?.gasolina?.toString() ?: "") }
+    var nomeDoPosto by remember { mutableStateOf(postoEditando?.nome ?: "") }
+
+    // 🔥 SLIDER (true = 75%, false = 70%)
+    var sliderState by remember {
+        mutableStateOf(true)
+    }
+
+    var resultadoResId by remember { mutableStateOf(R.string.vamos_calcular) }
+    var mensagem by remember { mutableStateOf("") }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (!isGranted) {
+            mensagem = "Permissão de localização negada"
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+    }
+
     Surface(
-        modifier = Modifier
-            .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
+
         Column(
             modifier = Modifier
-                .wrapContentSize(Alignment.Center)
+                .fillMaxSize()
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Campo de texto para entrada do preço
+
+            Spacer(modifier = Modifier.height(40.dp))
+
+            Text(
+                text = stringResource(R.string.preencha_os_campos),
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.headlineMedium
+            )
+
             OutlinedTextField(
                 value = alcool,
-                onValueChange = { alcool = it }, // Atualiza o estado
-                label = { Text("Preço do Álcool (R$)") },
-                modifier = Modifier.fillMaxWidth(), // Preenche a largura disponível
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number) // Configuração do teclado
+                onValueChange = { alcool = it },
+                label = { Text(stringResource(R.string.preco_alcool)) },
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
-            // Campo de texto para preço da Gasolina
+
             OutlinedTextField(
                 value = gasolina,
                 onValueChange = { gasolina = it },
-                label = { Text("Preço da Gasolina (R$)") },
+                label = { Text(stringResource(R.string.preco_gasolina)) },
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
-            // Campo de texto para preço da Gasolina
+
             OutlinedTextField(
                 value = nomeDoPosto,
                 onValueChange = { nomeDoPosto = it },
-                label = { Text("Nome do Posto (Opcional))") },
-                modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                label = { Text(stringResource(R.string.nome_posto)) },
+                modifier = Modifier.fillMaxWidth()
             )
 
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-                horizontalArrangement = Arrangement.Start) {
-                Text(
-                    text = "75%",
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(top = 16.dp)
-                )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text("70%")
                 Switch(
-                    modifier = Modifier.semantics { contentDescription = "Demo with icon" },
-                    checked = checkedState,
-                    onCheckedChange = { checkedState = it },
-                    thumbContent = {
-                        if (checkedState) {
-                            // Icon isn't focusable, no need for content description
-                            Icon(
-                                imageVector = Icons.Filled.Check,
-                                contentDescription = null,
-                                modifier = Modifier.size(SwitchDefaults.IconSize),
-                            )
-                        }
-                    }
+                    checked = sliderState,
+                    onCheckedChange = { sliderState = it }
                 )
+                Text("75%")
             }
-            // Botão de cálculo
+
             Button(
                 onClick = {
+                    val a = alcool.toDoubleOrNull()
+                    val g = gasolina.toDoubleOrNull()
 
+                    val limite = if (sliderState) 0.75 else 0.70
+
+                    resultadoResId = if (a != null && g != null && g != 0.0) {
+                        if (a / g <= limite) {
+                            R.string.compensa_alcool
+                        } else {
+                            R.string.compensa_gasolina
+                        }
+                    } else {
+                        R.string.valores_invalidos
+                    }
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Calcular")
+                Text(stringResource(R.string.calcular))
             }
 
-            // Texto do resultado
             Text(
-                text = "Vamos Calcular?",
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(top = 16.dp)
+                text = stringResource(resultadoResId),
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleMedium
             )
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-                horizontalArrangement = Arrangement.End) {
-                FloatingActionButton(
-                    onClick = { navController.navigate("ListaDePostos/$nomeDoPosto")},
 
+            Button(
+                onClick = {
+
+                    if (ActivityCompat.checkSelfPermission(
+                            context,
+                            Manifest.permission.ACCESS_FINE_LOCATION
+                        ) != PackageManager.PERMISSION_GRANTED
                     ) {
-                    Icon(Icons.Filled.Add, "Inserir Posto")
-                }
+                        mensagem = "Permissão de localização não concedida"
+                        return@Button
+                    }
+
+                    fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+
+                        val coordenadas = Coordenadas(
+                            latitude = location?.latitude ?: 0.0,
+                            longitude = location?.longitude ?: 0.0
+                        )
+
+                        val listaJson = sharedPreferences.getString("lista_postos", null)
+
+                        val lista = if (listaJson != null) {
+                            gson.fromJson(listaJson, Array<Posto>::class.java).toMutableList()
+                        } else {
+                            mutableListOf()
+                        }
+
+                        postoEditando?.let {
+                            lista.removeIf { it.nome == postoEditando.nome }
+                        }
+
+                        val dataCadastro = SimpleDateFormat(
+                            "dd/MM/yyyy",
+                            Locale.getDefault()
+                        ).format(Date())
+
+                        val novoPosto = Posto(
+                            nome = nomeDoPosto,
+                            alcool = alcool.toDoubleOrNull() ?: 0.0,
+                            gasolina = gasolina.toDoubleOrNull() ?: 0.0,
+                            dataCadastro = dataCadastro,
+                            coordenadas = coordenadas
+                        )
+
+                        lista.add(novoPosto)
+
+                        sharedPreferences.edit()
+                            .putString("lista_postos", gson.toJson(lista))
+                            .apply()
+
+                        mensagem = context.getString(R.string.posto_salvo)
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    if (postoEditando != null)
+                        stringResource(R.string.atualizar_posto)
+                    else
+                        stringResource(R.string.salvar_posto)
+                )
+            }
+
+            if (mensagem.isNotEmpty()) {
+                Text(text = mensagem)
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Button(
+                onClick = {
+                    navController.navigate("lista")
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(stringResource(R.string.ver_lista))
             }
         }
     }
+}
+fun salvarPostoComGPS(
+    coordenadas: Coordenadas,
+    sharedPreferences: android.content.SharedPreferences,
+    gson: Gson,
+    postoEditando: Posto?,
+    nomeDoPosto: String,
+    alcool: String,
+    gasolina: String
+) {
+
+    val listaJson = sharedPreferences.getString("lista_postos", null)
+
+    val lista = if (listaJson != null) {
+        gson.fromJson(listaJson, Array<Posto>::class.java).toMutableList()
+    } else {
+        mutableListOf()
+    }
+
+    postoEditando?.let {
+        lista.removeIf { it.nome == postoEditando.nome }
+    }
+
+    val dataCadastro = SimpleDateFormat(
+        "dd/MM/yyyy",
+        Locale.getDefault()
+    ).format(Date())
+
+    val novoPosto = Posto(
+        nome = nomeDoPosto,
+        alcool = alcool.toDoubleOrNull() ?: 0.0,
+        gasolina = gasolina.toDoubleOrNull() ?: 0.0,
+        dataCadastro = dataCadastro,
+        coordenadas = coordenadas
+    )
+
+    lista.add(novoPosto)
+
+    sharedPreferences.edit()
+        .putString("lista_postos", gson.toJson(lista))
+        .apply()
 }

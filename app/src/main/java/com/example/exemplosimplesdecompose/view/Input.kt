@@ -22,8 +22,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 
 @Composable
-fun InputView(navController: NavHostController) { //Recebe o elemento que permite realizar a navegação
+fun InputView(navController: NavHostController) {
     var text by remember { mutableStateOf(TextFieldValue("")) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -37,10 +38,12 @@ fun InputView(navController: NavHostController) { //Recebe o elemento que permit
             label = { Text("Digite algo") },
             modifier = Modifier.fillMaxWidth()
         )
+
         Spacer(modifier = Modifier.height(16.dp))
+
         Button(
             onClick = {
-                // Rota?
+                navController.navigate("mainalcgas")
             }
         ) {
             Text("Ir para a próxima tela")
