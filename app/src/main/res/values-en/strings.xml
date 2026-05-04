@@ -1,0 +1,38 @@
+<resources>
+
+    <string name="app_name">Alcohol or Gasoline</string>
+    <string name="welcome">Welcome to Alcohol or Gasoline</string>
+
+    <string name="calcular">Calculate</string>
+    <string name="salvar_posto">Save Station</string>
+    <string name="ver_lista">View Stations</string>
+
+    <string name="preco_alcool">Alcohol Price (R$)</string>
+    <string name="preco_gasolina">Gasoline Price (R$)</string>
+
+    <string name="nome_posto">Station Name</string>
+    <string name="localizacao">Station Location</string>
+
+    <string name="lista_postos">Stations List</string>
+
+    <string name="atualizar_posto">Update Station</string>
+    <string name="compensa_alcool">Alcohol is better</string>
+    <string name="compensa_gasolina">Gasoline is better</string>
+    <string name="valores_invalidos">Invalid values</string>
+
+    <string name="vamos_calcular">Calculate</string>
+
+    <string name="posto_salvo">Station saved successfully!</string>
+    <string name="posto_atualizado">Station updated successfully!</string>
+
+    <string name="avancar">Continue</string>
+    <string name="voltar_calculo">Back to Calculator</string>
+
+    <string name="editar">Edit</string>
+    <string name="excluir">Delete</string>
+
+    <string name="data_cadastro">Registration date</string>
+
+    <string name="preencha_os_campos">Fill in the fields to calculate</string>
+
+</resources>
