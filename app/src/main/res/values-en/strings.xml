@@ -20,7 +20,7 @@
     <string name="compensa_gasolina">Gasoline is better</string>
     <string name="valores_invalidos">Invalid values</string>
 
-    <string name="vamos_calcular">Calculate</string>
+    <string name="Aguardando_valores_para_o_cálculo">Awaiting values for calculation</string>
 
     <string name="posto_salvo">Station saved successfully!</string>
     <string name="posto_atualizado">Station updated successfully!</string>

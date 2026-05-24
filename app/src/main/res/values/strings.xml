@@ -20,7 +20,7 @@
     <string name="compensa_gasolina">Compensa usar Gasolina</string>
     <string name="valores_invalidos">Valores inválidos</string>
 
-    <string name="vamos_calcular">Vamos calcular</string>
+    <string name="Aguardando_valores_para_o_cálculo">aguardando valores para o cálculo</string>
 
     <string name="posto_salvo">Posto salvo com sucesso!</string>
     <string name="posto_atualizado">Posto atualizado com sucesso!</string>

@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 
 @Composable
@@ -53,7 +54,7 @@ fun AlcoolGasolinaPreco(
         )
     }
 
-    var resultadoResId by remember { mutableStateOf(R.string.vamos_calcular) }
+    var resultadoResId by remember { mutableStateOf(R.string.Aguardando_valores_para_o_cálculo) }
     var mensagem by remember { mutableStateOf("") }
 
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -94,7 +95,8 @@ fun AlcoolGasolinaPreco(
                 onValueChange = { alcool = it },
                 label = { Text(stringResource(R.string.preco_alcool)) },
                 modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                colors = OutlinedTextFieldDefaults.colors(unfocusedBorderColor = Color.DarkGray)
             )
 
             OutlinedTextField(
@@ -102,14 +104,16 @@ fun AlcoolGasolinaPreco(
                 onValueChange = { gasolina = it },
                 label = { Text(stringResource(R.string.preco_gasolina)) },
                 modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                colors = OutlinedTextFieldDefaults.colors(unfocusedBorderColor = Color.DarkGray)
             )
 
             OutlinedTextField(
                 value = nomeDoPosto,
                 onValueChange = { nomeDoPosto = it },
                 label = { Text(stringResource(R.string.nome_posto)) },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(unfocusedBorderColor = Color.DarkGray)
             )
 
             Row(
